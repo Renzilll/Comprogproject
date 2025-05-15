@@ -1,0 +1,57 @@
+import javax.swing.JOptionPane;
+
+public class SimpleEncryptionApp {
+
+
+    public static String encrypt(String text, int shift) {
+        StringBuilder result = new StringBuilder();
+        shift = shift % 26;
+
+        for (char c : text.toCharArray()) {
+            if (Character.isLetter(c)) {
+                char base = Character.isUpperCase(c) ? 'A' : 'a';
+                c = (char) ((c - base + shift + 26) % 26 + base);
+            }
+            result.append(c);
+        }
+        return result.toString();
+    }
+
+
+    public static String decrypt(String text, int shift) {
+        return encrypt(text, -shift); 
+    }
+
+   
+    public static int getShiftValue() {
+        while (true) {
+            String input = JOptionPane.showInputDialog(null, "Enter the shift value (number):", "Shift Value", JOptionPane.QUESTION_MESSAGE);
+            if (input == null) System.exit(0); 
+            try {
+                return Integer.parseInt(input.trim());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Please enter a valid integer.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        String[] options = {"Encrypt", "Decrypt"};
+        int choice = JOptionPane.showOptionDialog(null, "Choose an option:", "Simple Encryption App",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+        if (choice == -1) return; 
+
+        String message = JOptionPane.showInputDialog(null, "Enter the message:", "Message Input", JOptionPane.PLAIN_MESSAGE);
+        if (message == null || message.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No message entered.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int shift = getShiftValue();
+        String result = (choice == 0) ? encrypt(message, shift) : decrypt(message, shift);
+        String action = (choice == 0) ? "Encrypted" : "Decrypted";
+
+        JOptionPane.showMessageDialog(null, action + " message:\n" + result, action + " Result", JOptionPane.INFORMATION_MESSAGE);
+    }
+}
